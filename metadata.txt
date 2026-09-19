@@ -3,7 +3,7 @@ name=TopoFast
 qgisMinimumVersion=3.28
 qgisMaximumVersion=4.99
 description=Draw an area on the map and automatically get the DEM (OpenTopography) and its contour lines with a single click.
-version=0.32
+version=0.35
 icon=icon.png
 author=bpaucar
 email=bpaucarr@gmail.com
@@ -11,11 +11,11 @@ email=bpaucarr@gmail.com
 about=TopoFast automates the workflow: select an area -> download the matching DEM from the OpenTopography API -> extract contour lines with GDAL, loading both layers into the project. Requires a free OpenTopography API Key (https://opentopography.org/).
   Español: TopoFast automatiza el flujo: seleccionar un área -> descargar el DEM correspondiente desde la API de OpenTopography -> extraer las curvas de nivel con GDAL, cargando ambas capas en el proyecto. Requiere una API Key gratuita de https://opentopography.org/.
 
-tracker=
-repository=
+tracker=https://github.com/bpaucarr13-cmyk/topo/issues
+repository=https://github.com/bpaucarr13-cmyk/topo
 hasProcessingProvider=no
 tags=dem,curvas de nivel,contornos,opentopography,topografia,elevacion,gdal
-homepage=
+homepage=https://github.com/bpaucarr13-cmyk/topo#readme
 category=Vector
 experimental=True
 deprecated=False
