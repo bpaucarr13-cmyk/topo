@@ -1,6 +1,6 @@
 import os
 import shutil
-import subprocess
+import subprocess  # nosec B404 - solo para llamar a ogr2ogr (ver _export_dxf)
 import tempfile
 import uuid
 import urllib.request
@@ -493,7 +493,10 @@ class TopoFast:
         cmd += [dxf_path, contour_gpkg_path, "contour"]
 
         creationflags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
-        result = subprocess.run(cmd, capture_output=True, text=True, creationflags=creationflags)
+        # Lista fija de argumentos (sin shell=True): nada de la entrada del usuario se interpreta como comando.
+        result = subprocess.run(  # nosec B603
+            cmd, capture_output=True, text=True, creationflags=creationflags
+        )
 
         dxf_check_layer = QgsVectorLayer(dxf_path, "check", "ogr")
         if not dxf_check_layer.isValid() or dxf_check_layer.featureCount() == 0:
@@ -678,6 +681,9 @@ class TopoFast:
             "API_Key": params["api_key"],
         }
         url = "https://portal.opentopography.org/API/globaldem?" + urllib.parse.urlencode(query)
+        # Siempre https (constante de arriba); se verifica igual para que urlopen nunca abra file:/ ni esquemas raros.
+        if not url.startswith("https://"):
+            raise RuntimeError("URL de descarga no válida.")
 
         # Con "Cancelar" habilitado y timeout: antes, si OpenTopography no
         # respondía, urlretrieve() podía quedar colgado indefinidamente y la
@@ -695,7 +701,7 @@ class TopoFast:
 
         cancelled = False
         try:
-            with urllib.request.urlopen(url, timeout=self.DOWNLOAD_TIMEOUT_SECONDS) as response:
+            with urllib.request.urlopen(url, timeout=self.DOWNLOAD_TIMEOUT_SECONDS) as response:  # nosec B310 - https verificado arriba
                 content_length = response.getheader("Content-Length")
                 total_bytes = int(content_length) if content_length and content_length.isdigit() else 0
                 progress.setMaximum(total_bytes)

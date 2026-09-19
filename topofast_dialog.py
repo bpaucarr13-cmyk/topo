@@ -1,5 +1,6 @@
 import sys
 
+from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtCore import Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import (
     QDialog, QFormLayout, QLineEdit, QComboBox, QDoubleSpinBox,
@@ -14,7 +15,7 @@ def _sync_taskbar_group(widget, reference_widget):
     el mouse por el ícono de QGIS, en vez de como un ícono aparte (que es lo
     que pasaba con Qt.WindowType.Window solo). Es un detalle cosmético: si
     falla por lo que sea (pywin32 ausente, no-Windows, etc.) no debe romper
-    el diálogo, por eso todo queda envuelto en un try/except silencioso.
+    el diálogo, así que el error solo se anota en el log de QGIS.
     """
     if sys.platform != "win32" or reference_widget is None:
         return
@@ -32,8 +33,11 @@ def _sync_taskbar_group(widget, reference_widget):
         )
         own_store.SetValue(pscon.PKEY_AppUserModel_ID, propsys.PROPVARIANTType(app_id))
         own_store.Commit()
-    except Exception:
-        pass
+    except Exception as exc:
+        QgsMessageLog.logMessage(
+            f"No se pudo agrupar la ventana en la barra de tareas: {exc}",
+            "TopoFast", Qgis.MessageLevel.Info,
+        )
 
 
 DEM_TYPES = [
